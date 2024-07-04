@@ -48,11 +48,12 @@ class Maze(gym.Env):
         assert mode in ['human', 'rgb_array']
 
         screen_size = 600
-        scale = screen_size / 5
+        scale = int(screen_size / 5)
 
         if self.screen is None:
             pygame.init()
             self.screen = pygame.Surface((screen_size, screen_size))
+            self.screen = pygame.display.set_mode((screen_size, screen_size))
 
         surf = pygame.Surface((screen_size, screen_size))
         surf.fill((22, 36, 71))
@@ -86,6 +87,9 @@ class Maze(gym.Env):
 
         surf = pygame.transform.flip(surf, False, True)
         self.screen.blit(surf, (0, 0))
+
+        if mode == 'human':
+            pygame.display.update()
 
         return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
@@ -169,19 +173,3 @@ class Maze(gym.Env):
         return distances
 
 
-def display_video(frames):
-    # Copied from: https://colab.research.google.com/github/deepmind/dm_control/blob/master/tutorial.ipynb
-    orig_backend = matplotlib.get_backend()
-    matplotlib.use('Agg')
-    fig, ax = plt.subplots(1, 1, figsize=(5, 5))
-    matplotlib.use(orig_backend)
-    ax.set_axis_off()
-    ax.set_aspect('equal')
-    ax.set_position([0, 0, 1, 1])
-    im = ax.imshow(frames[0])
-    def update(frame):
-        im.set_data(frame)
-        return [im]
-    anim = animation.FuncAnimation(fig=fig, func=update, frames=frames,
-                                    interval=50, blit=True, repeat=False)
-    return HTML(anim.to_html5_video())
