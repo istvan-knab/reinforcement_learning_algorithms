@@ -1,4 +1,5 @@
 from environments.maze import Maze
+import time
 
 if __name__ == "__main__":
     env = Maze()
@@ -17,4 +18,5 @@ if __name__ == "__main__":
         trajectory.append([state, action, reward, done, next_state])
         state = next_state
         print(f'Actual return: {G_t}')
+        time.sleep(1)
     env.close()
