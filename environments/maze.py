@@ -1,14 +1,9 @@
 from typing import Tuple, Dict, Optional, Iterable
-import os
 import numpy as np
 import gym
 from gym import spaces
 import pygame
 from pygame import gfxdraw
-
-os.environ['SDL_VIDEO_WINDOW_POS'] = "100,100"
-os.environ['SDL_VIDEO_CENTERED'] = "1"
-os.environ['SDL_VIDEO_MAC_FULLSCREEN_SPACES'] = '0'
 
 class Maze(gym.Env):
 
