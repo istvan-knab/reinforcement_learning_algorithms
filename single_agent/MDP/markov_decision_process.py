@@ -9,6 +9,7 @@ if __name__ == "__main__":
     trajectory = []
     G_t = 0
     gamma = 0.9
+    env.render(mode='human')
 
     while not done:
         action = env.action_space.sample()

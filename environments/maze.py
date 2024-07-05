@@ -20,8 +20,11 @@ class Maze(gym.Env):
         self.action_space.action_meanings = {0: 'UP', 1: 'RIGHT', 2: 'DOWN', 3: "LEFT"}
         self.observation_space = spaces.MultiDiscrete([size, size])
 
-        self.screen = None
-        self.agent_transform = None
+        self.screen_size = 600
+        self.scale = int(self.screen_size / 5)
+        pygame.init()
+        self.screen = pygame.Surface((self.screen_size, self.screen_size))
+        self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
 
     def step(self, action: int) -> Tuple[Tuple[int, int], float, bool, Dict]:
         reward = self.compute_reward(self.state, action)
@@ -38,20 +41,11 @@ class Maze(gym.Env):
             self.state = (0, 0)
         return self.state
 
-    def render(self, mode: str = 'human') -> Optional[np.ndarray]:
+    def render(self, mode: str = 'human') -> None:
         assert mode in ['human', 'rgb_array']
 
-        screen_size = 600
-        scale = int(screen_size / 5)
-
-        if self.screen is None:
-            pygame.init()
-            self.screen = pygame.Surface((screen_size, screen_size))
-            self.screen = pygame.display.set_mode((screen_size, screen_size))
-
-        surf = pygame.Surface((screen_size, screen_size))
+        surf = pygame.Surface((self.screen_size, self.screen_size))
         surf.fill((22, 36, 71))
-
 
         for row in range(5):
             for col in range(5):
@@ -63,21 +57,21 @@ class Maze(gym.Env):
                         # Add the geometry of the edges and walls (i.e. the boundaries between
                         # adjacent squares that are not connected).
                         row_diff, col_diff = np.subtract(next_state, state)
-                        left = (col + (col_diff > 0)) * scale - 2 * (col_diff != 0)
-                        right = ((col + 1) - (col_diff < 0)) * scale + 2 * (col_diff != 0)
-                        top = (5 - (row + (row_diff > 0))) * scale - 2 * (row_diff != 0)
-                        bottom = (5 - ((row + 1) - (row_diff < 0))) * scale + 2 * (row_diff != 0)
+                        left = (col + (col_diff > 0)) * self.scale - 2 * (col_diff != 0)
+                        right = ((col + 1) - (col_diff < 0)) * self.scale + 2 * (col_diff != 0)
+                        top = (5 - (row + (row_diff > 0))) * self.scale - 2 * (row_diff != 0)
+                        bottom = (5 - ((row + 1) - (row_diff < 0))) * self.scale + 2 * (row_diff != 0)
 
                         gfxdraw.filled_polygon(surf, [(left, bottom), (left, top), (right, top), (right, bottom)], (255, 255, 255))
 
         # Add the geometry of the goal square to the viewer.
-        left, right, top, bottom = scale * 4 + 10, scale * 5 - 10, scale - 10, 10
+        left, right, top, bottom = self.scale * 4 + 10, self.scale * 5 - 10, self.scale - 10, 10
         gfxdraw.filled_polygon(surf, [(left, bottom), (left, top), (right, top), (right, bottom)], (40, 199, 172))
 
         # Add the geometry of the agent to the viewer.
-        agent_row = int(screen_size - scale * (self.state[0] + .5))
-        agent_col = int(scale * (self.state[1] + .5))
-        gfxdraw.filled_circle(surf, agent_col, agent_row, int(scale * .6 / 2), (228, 63, 90))
+        agent_row = int(self.screen_size - self.scale * (self.state[0] + .5))
+        agent_col = int(self.scale * (self.state[1] + .5))
+        gfxdraw.filled_circle(surf, agent_col, agent_row, int(self.scale * .6 / 2), (228, 63, 90))
 
         surf = pygame.transform.flip(surf, False, True)
         self.screen.blit(surf, (0, 0))
@@ -85,9 +79,6 @@ class Maze(gym.Env):
         if mode == 'human':
             pygame.display.update()
 
-        return np.transpose(
-                np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
-            )
 
     def close(self) -> None:
         if self.screen is not None:
