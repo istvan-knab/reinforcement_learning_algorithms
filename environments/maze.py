@@ -22,9 +22,10 @@ class Maze(gym.Env):
 
         self.screen_size = 600
         self.scale = int(self.screen_size / 5)
-        pygame.init()
+
         self.screen = pygame.Surface((self.screen_size, self.screen_size))
         self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
+        pygame.init()
 
     def step(self, action: int) -> Tuple[Tuple[int, int], float, bool, Dict]:
         reward = self.compute_reward(self.state, action)
