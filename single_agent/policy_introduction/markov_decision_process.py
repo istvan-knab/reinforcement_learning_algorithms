@@ -19,5 +19,5 @@ if __name__ == "__main__":
         trajectory.append([state, action, reward, done, next_state])
         state = next_state
         print(f'Actual return: {G_t}')
-        time.sleep(1)
+        time.sleep(0.1)
     env.close()

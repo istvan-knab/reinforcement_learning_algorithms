@@ -22,10 +22,11 @@ class Maze(gym.Env):
 
         self.screen_size = 600
         self.scale = int(self.screen_size / 5)
-
+        pygame.init()
         self.screen = pygame.Surface((self.screen_size, self.screen_size))
         self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
-        pygame.init()
+        self.reset()
+        self.render("human")
 
     def step(self, action: int) -> Tuple[Tuple[int, int], float, bool, Dict]:
         reward = self.compute_reward(self.state, action)
@@ -42,7 +43,7 @@ class Maze(gym.Env):
             self.state = (0, 0)
         return self.state
 
-    def render(self, mode: str = 'human') -> None:
+    def render(self, mode: str = 'human') -> Optional[np.ndarray]:
         assert mode in ['human', 'rgb_array']
 
         surf = pygame.Surface((self.screen_size, self.screen_size))
@@ -80,6 +81,9 @@ class Maze(gym.Env):
         if mode == 'human':
             pygame.display.update()
 
+        return np.transpose(
+                np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
+            )
 
     def close(self) -> None:
         if self.screen is not None:
@@ -92,13 +96,6 @@ class Maze(gym.Env):
         if self.shaped_rewards:
             return - (self.distances[next_state] / self.distances.max())
         return - float(state != self.goal)
-
-    def simulate_step(self, state: Tuple[int, int], action: int):
-        reward = self.compute_reward(state, action)
-        next_state = self._get_next_state(state, action)
-        done = next_state == self.goal
-        info = {}
-        return next_state, reward, done, info
 
     def _get_next_state(self, state: Tuple[int, int], action: int) -> Tuple[int, int]:
         if action == 0:
