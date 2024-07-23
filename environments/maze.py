@@ -27,14 +27,17 @@ class Maze(gym.Env):
             self.screen = pygame.Surface((self.screen_size, self.screen_size))
             self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
             self.reset()
+            self.render()
 
 
     def step(self, action: int) -> Tuple[Tuple[int, int], float, bool, Dict]:
         reward = self.compute_reward(self.state, action)
         self.state = self._get_next_state(self.state, action)
-        done = self.state == self.goal
+        terminated = self.state == self.goal
+        truncated = False
         info = {}
-        return self.state, reward, done, info
+
+        return self.state, reward, terminated, truncated, info
 
     def reset(self) -> Tuple[int, int]:
         if self.exploring_starts:
@@ -44,8 +47,7 @@ class Maze(gym.Env):
             self.state = (0, 0)
         return self.state
 
-    def render(self, mode: str = 'human') -> Optional[np.ndarray]:
-        assert mode in ['human', 'rgb_array']
+    def render(self) -> Optional[np.ndarray]:
 
         surf = pygame.Surface((self.screen_size, self.screen_size))
         surf.fill((22, 36, 71))
@@ -79,8 +81,8 @@ class Maze(gym.Env):
         surf = pygame.transform.flip(surf, False, True)
         self.screen.blit(surf, (0, 0))
 
-        if mode == 'human':
-            pygame.display.update()
+
+        pygame.display.update()
 
         return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)

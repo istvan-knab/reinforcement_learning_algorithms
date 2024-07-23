@@ -10,7 +10,7 @@ def policy(state, policy) -> np.ndarray:
 
 def value_iteration(env, policy, state_values, theta=1e-6, gamma=0.99):
     delta = float('inf')
-    secondary_env = Maze()
+    secondary_env = Maze('human')
     secondary_env.reset()
 
     while delta > theta:
@@ -23,7 +23,7 @@ def value_iteration(env, policy, state_values, theta=1e-6, gamma=0.99):
 
                 for action in range(4):
                     secondary_env.state = (row, col)
-                    next_state, reward, _, _ = secondary_env.step(action)
+                    next_state, reward, _, _, _ = secondary_env.step(action)
                     qsa = reward + gamma * state_values[next_state]
                     if qsa > max_qsa:
                         max_qsa = qsa
@@ -37,7 +37,7 @@ def value_iteration(env, policy, state_values, theta=1e-6, gamma=0.99):
 
     print(state_values)
 if __name__ == "__main__":
-    env = Maze()
+    env = Maze('human')
     visualization = PolicyVisualization()
     state = env.reset()
     done = False
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     while not done:
         action_probabilities = policy(state, policy_probabilities)
         action = np.random.choice(range(4), 1, p=action_probabilities)
-        state,_,_,_ = env.step(action)
-        frame = env.render(mode='human')
+        state,_,_, _, _  = env.step(action)
+        frame = env.render()
         time.sleep(0.2)
     env.close()

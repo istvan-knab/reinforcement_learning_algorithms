@@ -24,7 +24,9 @@ def sarsa(env, EPISODES = 400, alpha = 0.1, gamma = 0.99, epsilon = 1, epsilon_d
         epsilon *= epsilon_decay
         episode_reward = 0
         while not done:
-            next_state, reward, done, _ = env.step(action)
+            next_state, reward, terminated, truncated, _ = env.step(action)
+            if terminated or truncated:
+                done = True
             next_action = egredy_policy(next_state, Q, epsilon)
             Qsa = Q[state][action]
             next_Qsa = Q[next_state][next_action]
@@ -39,14 +41,11 @@ def sarsa(env, EPISODES = 400, alpha = 0.1, gamma = 0.99, epsilon = 1, epsilon_d
     done = False
     state = env.reset()
     while not done:
-        next_state, reward, done, _ = env.step(action)
+        next_state, reward, terminated, truncated, _ = env.step(action)
+        if terminated or truncated:
+            done = True
         next_action = egredy_policy(next_state, Q, epsilon)
-        Qsa = Q[state][action]
-        next_Qsa = Q[next_state][next_action]
-        Q[state][action] += Qsa + alpha * (reward + gamma * next_Qsa - Qsa)
-        state = next_state
         action = next_action
-        episode_reward += reward
         env.render()
         time.sleep(0.3)
 
