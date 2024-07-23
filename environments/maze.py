@@ -7,7 +7,7 @@ from pygame import gfxdraw
 
 class Maze(gym.Env):
 
-    def __init__(self, exploring_starts: bool = False,
+    def __init__(self,render_mode, exploring_starts: bool = False,
                  shaped_rewards: bool = False, size: int = 5) -> None:
         super().__init__()
         self.exploring_starts = exploring_starts
@@ -20,13 +20,14 @@ class Maze(gym.Env):
         self.action_space.action_meanings = {0: 'UP', 1: 'RIGHT', 2: 'DOWN', 3: "LEFT"}
         self.observation_space = spaces.MultiDiscrete([size, size])
 
-        self.screen_size = 600
-        self.scale = int(self.screen_size / 5)
-        pygame.init()
-        self.screen = pygame.Surface((self.screen_size, self.screen_size))
-        self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
-        self.reset()
-        self.render("human")
+        if render_mode == 'human':
+            self.screen_size = 600
+            self.scale = int(self.screen_size / 5)
+            pygame.init()
+            self.screen = pygame.Surface((self.screen_size, self.screen_size))
+            self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
+            self.reset()
+
 
     def step(self, action: int) -> Tuple[Tuple[int, int], float, bool, Dict]:
         reward = self.compute_reward(self.state, action)
