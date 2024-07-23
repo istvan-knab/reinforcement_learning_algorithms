@@ -8,7 +8,7 @@ from single_agent.policy_introduction.policy_visualization import PolicyVisualiz
 def policy(state, policy) -> np.ndarray:
     return policy[state]
 
-def value_iteration(env, policy, state_values, theta=1e-3, gamma=0.99):
+def value_iteration(env, policy, state_values, theta=1e-6, gamma=0.99):
     delta = float('inf')
     secondary_env = Maze()
     secondary_env.reset()
