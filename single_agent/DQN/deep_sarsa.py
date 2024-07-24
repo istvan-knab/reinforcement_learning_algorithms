@@ -11,13 +11,16 @@ from tqdm import tqdm
 
 from single_agent.DQN.seed import seed_all
 from evaluation.log_values import Logger
+from single_agent.DQN.env_wrapper import EnvWrapper
 
 def deep_sarsa_training(config: dict) -> None:
 
-
     env = gym.make(config["ENVIRONMENT"])
+    env = EnvWrapper(env)
     logger = Logger("Deep SARSA", "MountainCar-v0", config["ALPHA"], config["GAMMA"])
     seed_all(config["SEED"], env)
+
+
 
 def deep_sarsa_test(config: dict) -> None:
     env = gym.make(config["ENVIRONMENT"])
