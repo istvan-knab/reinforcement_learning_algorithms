@@ -2,16 +2,13 @@ import random
 import copy
 import yaml
 import gymnasium as gym
-import torch
-import torch.nn.functional as F
-from torch import nn as nn
-from torch.optim import AdamW
-from tqdm import tqdm
+
 
 
 from single_agent.DQN.seed import seed_all
 from evaluation.log_values import Logger
 from single_agent.DQN.env_wrapper import EnvWrapper
+from single_agent.DQN.neural_network import NeuralNetwork
 
 def deep_sarsa_training(config: dict) -> None:
 
@@ -19,6 +16,9 @@ def deep_sarsa_training(config: dict) -> None:
     env = EnvWrapper(env)
     logger = Logger("Deep SARSA", "MountainCar-v0", config["ALPHA"], config["GAMMA"])
     seed_all(config["SEED"], env)
+    q_network = NeuralNetwork(env)
+    target_network = copy.deepcopy(q_network)
+    target_network = target_network.eval()
 
 
 
