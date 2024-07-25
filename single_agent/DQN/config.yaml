@@ -2,3 +2,4 @@ ALPHA : 0.01
 GAMMA : 0.99
 ENVIRONMENT : "MountainCar-v0"
 SEED : 0
+EPSILON : 0.99

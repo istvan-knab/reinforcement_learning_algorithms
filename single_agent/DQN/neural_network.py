@@ -1,8 +1,8 @@
 import torch
 import torch.nn.functional as F
 from torch import nn as nn
-from torch.optim import AdamW
-from tqdm import tqdm
+import random
+
 class NeuralNetwork(nn.Module):
     def __init__(self, env):
         super(NeuralNetwork, self).__init__()
@@ -14,3 +14,4 @@ class NeuralNetwork(nn.Module):
         x = F.relu(self.layer1(x))
         x = F.relu(self.layer2(x))
         return self.layer3(x)
+
