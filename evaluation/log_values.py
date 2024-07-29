@@ -15,6 +15,16 @@ class Logger:
         self.run["environment"] = environment
 
 
+    def start_training(self, config):
+        print("Starting training------------------")
+        print(f"Algorithm: {self.algorithm}")
+        print(f"Environment: {self.environment}")
+        print(f'Device : {config["DEVICE"]}')
+        print(f"Learning Rate: {config['ALPHA']}")
+        print(f"Discount Factor: {config['GAMMA']}")
+        print(f'Buffer size: {config["BUFFER"]}')
+        print(f'Batch size: {config["BATCH"]}')
+
     def console_log(self, reward, epsilon, episode):
         print('------------------------')
         print('------------------------')
@@ -22,13 +32,20 @@ class Logger:
         print("Episode reward:", reward)
         print("Epsilon:       ", epsilon)
 
-    def neptune_log(self, reward, epsilon, episode):
+    def neptune_log(self, reward, epsilon, loss):
         self.run["train/reward"].append(reward)
         self.run["train/epsilon"].append(epsilon)
+        self.run["train/loss"].append(loss)
 
 
-    def step(self, reward, epsilon, episode):
-        self.console_log(reward, epsilon, episode)
-        self.neptune_log(reward, epsilon, episode)
+    def step(self, reward, epsilon, episode, loss):
+        #self.console_log(reward, epsilon, episode)
+        self.neptune_log(reward, epsilon, loss)
         self.run["train/algorithm"] = self.algorithm
         self.run["train/environment"] = self.environment
+
+    def set_tqdm(self):
+        WHITE = '\033[97m'
+        RESET = '\033[0m'
+        tqdm_format = f'{WHITE}{{l_bar}}{{bar}}{{r_bar}}{RESET}'
+        return tqdm_format

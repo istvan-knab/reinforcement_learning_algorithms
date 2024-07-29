@@ -6,6 +6,7 @@ class ReplayMemory:
         self.buffer_size = buffer_size
         self.batch_size = batch_size
         self.memory = deque([], maxlen=self.buffer_size)
+        random.seed(0)
 
     def add_element(self, *args):
         Transition = namedtuple('Transition',('state', 'action',
