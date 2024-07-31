@@ -27,7 +27,7 @@ def deep_q_training(config):
     torch.manual_seed(0)
     torch.seed()
     #setup environment
-    env = gym.make(config["ENVIRONMENT"], render_mode="rgb_array")
+    env = gym.make(config["ENVIRONMENT"])
     env = EnvWrapper(env)
     #setup logger
     logger = Logger("DQN", config["ENVIRONMENT"], config["ALPHA"], config["GAMMA"])
@@ -55,11 +55,11 @@ def deep_q_training(config):
         while not done:
             action = epsilon_greedy_policy(q_network, state, env, epsilon)
             next_state, reward, terminated, truncated, _ = env.step(action)
-            env.render()
             episode_reward += reward
             if terminated or truncated:
                 done = torch.tensor(True).unsqueeze(0).unsqueeze(0)
             memory.add_element(state, action, next_state, reward, done)
+            state = next_state
             if memory.__len__() >= config["BATCH"]:
                 state_batch, action_batch, next_state_batch, reward_batch, done_batch = memory.sample()
                 qsa_batch = q_network(state_batch).gather(1, action_batch)
@@ -71,6 +71,7 @@ def deep_q_training(config):
                 loss.backward()
                 optimizer.step()
                 episode_loss += loss.item()
+            env.render()
 
         if episode % config["UPDATE_FREQ"] == 0:
             target_network = q_network

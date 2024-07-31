@@ -21,6 +21,7 @@ def epsilon_greedy_policy(network, state, env, epsilon):
     else:
         return torch.argmax(network(state).detach(), dim=1, keepdim=True)
 
+
 def deep_sarsa_training(config: dict) -> None:
     env = gym.make(config["ENVIRONMENT"], 500, render_mode="rgb_array")
     env = EnvWrapper(env)
@@ -41,7 +42,8 @@ def deep_sarsa_training(config: dict) -> None:
         done = torch.tensor(False).unsqueeze(0).unsqueeze(0)
         episode_reward = 0
         episode_loss = 0
-        epsilon *= config["EPSILON"]
+        if memory.__len__() >= 5 * config["BATCH"]:
+            epsilon *= config["EPSILON"]
 
         while not done :
             action = epsilon_greedy_policy(q_network, state, env, epsilon)
@@ -62,6 +64,7 @@ def deep_sarsa_training(config: dict) -> None:
                 loss.backward()
                 oprimizer.step()
                 episode_loss += loss.item()
+            state = next_state
         if episode % config["UPDATE_FREQ"] == 0:
             target_network.load_state_dict(q_network.state_dict())
         logger.step(episode_reward, epsilon, episode, episode_loss)

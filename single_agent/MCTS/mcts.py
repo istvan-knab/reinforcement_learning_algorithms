@@ -1,11 +1,14 @@
 import gymnasium as gym
 class Node:
-    def __init__(self, move, parent):
-        self.move = move
+    def __init__(self, id, parent):
         self.parent = parent
-        self.N = 0
-        self.Q = 0
-        self.children = {}
+        self.value = 0
+        self.id = id
+
+class Tree:
+    def __init__(self):
+        self.root = None
+
 
 class MCTS:
     def __init__(self):
