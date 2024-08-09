@@ -1,6 +1,7 @@
 from collections import deque, namedtuple
 import random
 import torch
+
 class ReplayMemory:
     def __init__(self, buffer_size:int, batch_size:int):
         self.buffer_size = buffer_size
@@ -19,3 +20,4 @@ class ReplayMemory:
 
     def __len__(self):
         return len(self.memory)
+

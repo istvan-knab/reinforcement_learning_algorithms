@@ -1,6 +1,6 @@
 ALPHA : 0.0001
 GAMMA : 0.99
-ENVIRONMENT : 'LunarLander-v2'
+ENVIRONMENT : "BipedalWalker-v3"
 SEED : 0
 EPSILON : 0.998
 BATCH : 512
