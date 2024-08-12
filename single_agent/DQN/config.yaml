@@ -1,6 +1,6 @@
 ALPHA : 0.01
 GAMMA : 0.99
-ENVIRONMENT : 'LunarLander-v2'
+ENVIRONMENT : 'CartPole-v1'
 SEED : 0
 EPSILON : 0.998
 BATCH : 512
